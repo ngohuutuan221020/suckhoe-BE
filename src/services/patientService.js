@@ -11,7 +11,6 @@ let buildUrlEmail = (doctorId, token) => {
   return result;
 };
 let postBookAppointment = (data) => {
-  console.log("postBookAppointment", data);
   return new Promise(async (resolve, reject) => {
     try {
       let schedule = await db.Schedule.findOne({
@@ -52,7 +51,7 @@ let postBookAppointment = (data) => {
             time: data.timeString,
             doctorName: data.doctorName,
             language: data.language,
-            price: "500.000VND",
+            // price: "500.000VND",
             redirecLink: buildUrlEmail(data.doctorId, token),
           });
 
@@ -68,21 +67,29 @@ let postBookAppointment = (data) => {
               reason: data.reason,
             },
           }).then(async (user, created) => {
-            if (user && user[0]) {
-              await db.Booking.findOrCreate({
-                where: {
-                  statusId: "S1",
-                },
-                defaults: {
-                  statusId: "S1",
-                  doctorId: data.doctorId,
-                  patientId: user[0].id,
-                  date: data.date,
-                  timeType: data.timeType,
-                  token: token,
-                },
-              });
-            }
+            await db.Booking.create({
+              statusId: "S1",
+              doctorId: data.doctorId,
+              patientId: user[0].id,
+              date: data.date,
+              timeType: data.timeType,
+              token: token,
+            });
+            // if (user && user[0]) {
+            //   await db.Booking.findOrCreate({
+            //     where: {
+            //       statusId: "S1",
+            //     },
+            //     defaults: {
+            //       statusId: "S1",
+            //       doctorId: data.doctorId,
+            //       patientId: user[0].id,
+            //       date: data.date,
+            //       timeType: data.timeType,
+            //       token: token,
+            //     },
+            //   });
+            // }
             if (!created) {
               let user = await db.User.findOne({
                 where: {email: data.email},
