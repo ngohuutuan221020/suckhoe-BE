@@ -51,7 +51,7 @@ let postBookAppointment = (data) => {
             time: data.timeString,
             doctorName: data.doctorName,
             language: data.language,
-            // price: "500.000VND",
+            price: "500.000VND",
             redirecLink: buildUrlEmail(data.doctorId, token),
           });
 
