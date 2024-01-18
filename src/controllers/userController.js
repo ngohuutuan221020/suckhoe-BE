@@ -6,7 +6,7 @@ let handleLogin = async (req, res) => {
   if (!email || !password) {
     return res.status(500).json({
       errorCode: 1,
-      message: "Invalid email or password",
+      message: "Email hoặc mật khẩu không đúng!",
     });
   }
   let userData = await userService.handleUserLogin(email, password);

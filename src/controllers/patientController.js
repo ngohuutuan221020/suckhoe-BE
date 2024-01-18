@@ -6,8 +6,8 @@ let postBookAppointment = async (req, res) => {
   } catch (error) {
     console.log(error);
     return res.status(200).json({
-      // errorCode: -1,
-      // message: "error from postBookAppointment",
+      errorCode: -1,
+      message: "error from postBookAppointment",
     });
   }
 };

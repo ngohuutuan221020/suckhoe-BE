@@ -260,8 +260,6 @@ let bulkSreateScheduleServer = (data) => {
         let toCreate = _.differenceWith(schedule, extsting, (a, b) => {
           return a.timeType === b.timeType && a.date === b.date;
         });
-        console.log("date1", schedule);
-        console.log("date2", extsting);
         if (toCreate && toCreate.length > 0) {
           await db.Schedule.bulkCreate(toCreate);
         }
@@ -450,6 +448,56 @@ let getListPatientForDoctor = (doctorId, date) => {
     }
   });
 };
+let getListPatient = (date) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      if (!date) {
+        resolve({
+          errorCode: 1,
+          errorMessage: "Missing required parameter",
+        });
+      } else {
+        let data = await db.Booking.findAll({
+          where: {
+            date: date,
+          },
+          include: [
+            {
+              model: db.User,
+              as: "patientData",
+              attributes: ["email", "firstName", "gender", "phoneNumber", "address", "reason"],
+              include: [{model: db.Allcode, as: "genderData", attributes: ["valueEn", "valueVi"]}],
+            },
+            {
+              model: db.User,
+              as: "doctorData",
+              attributes: ["email", "gender", "phoneNumber", "address", "firstName", "lastName"],
+              include: [{model: db.Allcode, as: "genderData", attributes: ["valueEn", "valueVi"]}],
+            },
+            {
+              model: db.Allcode,
+              as: "timeTypeDataPatient",
+              attributes: ["valueEn", "valueVi"],
+            },
+            {
+              model: db.Allcode,
+              as: "statusIdDataPatient",
+              attributes: ["valueEn", "valueVi"],
+            },
+          ],
+          raw: false,
+          nest: true,
+        });
+        resolve({
+          errorCode: 0,
+          data: data,
+        });
+      }
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
 let sendRemedy = (data) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -496,4 +544,5 @@ module.exports = {
   getDoctorExtraInforById: getDoctorExtraInforById,
   getProfileDoctorById: getProfileDoctorById,
   getListPatientForDoctor: getListPatientForDoctor,
+  getListPatient: getListPatient,
 };

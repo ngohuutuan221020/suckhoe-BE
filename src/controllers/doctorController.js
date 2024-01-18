@@ -109,6 +109,18 @@ let getListPatientForDoctor = async (req, res) => {
     });
   }
 };
+let getListPatient = async (req, res) => {
+  try {
+    let infor = await doctorService.getListPatient(req.query.date);
+    return res.status(200).json(infor);
+  } catch (error) {
+    console.log(error);
+    return res.status(200).json({
+      errorCode: -1,
+      message: "error getListPatient",
+    });
+  }
+};
 let sendRemedy = async (req, res) => {
   try {
     let infor = await doctorService.sendRemedy(req.body);
@@ -132,4 +144,5 @@ module.exports = {
   getDoctorExtraInforById: getDoctorExtraInforById,
   getProfileDoctorById: getProfileDoctorById,
   getListPatientForDoctor: getListPatientForDoctor,
+  getListPatient: getListPatient,
 };
