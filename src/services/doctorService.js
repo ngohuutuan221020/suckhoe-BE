@@ -533,7 +533,60 @@ let sendRemedy = (data) => {
     }
   });
 };
+
+let getFullDoctors = () => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let doctors = await db.User.findAll({
+        where: {roleId: "R2"},
+        order: [["id", "DESC"]],
+        attributes: {
+          exclude: ["password"],
+        },
+        include: [
+          {
+            model: db.Allcode,
+            as: "positionData",
+            attributes: ["valueEn", "valueVi"],
+          },
+        ],
+        raw: true,
+        nest: true,
+      });
+
+      resolve({
+        errorCode: 0,
+        data: doctors,
+      });
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
+let getFullSpecialty = () => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let data = await db.Specialty.findAll({
+        order: [["id", "DESC"]],
+      });
+      if (data && data.length > 0) {
+        data.map((item) => {
+          item.image = Buffer.from(item.image, "base64").toString("binary");
+          return item;
+        });
+      }
+      resolve({
+        errorCode: 0,
+        data,
+      });
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
 module.exports = {
+  getFullSpecialty: getFullSpecialty,
+  getFullDoctors: getFullDoctors,
   sendRemedy: sendRemedy,
   getTopDoctorHome: getTopDoctorHome,
   getAllDoctors: getAllDoctors,

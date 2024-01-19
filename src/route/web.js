@@ -46,6 +46,11 @@ let initWebRoutes = (app) => {
   router.post("/api/create-new-clinic", clinicController.createClinic);
   router.get("/api/get-clinic", clinicController.getAllClinic);
   router.get("/api/get-detail-clinic-by-id", clinicController.getDetailClinicById);
+
+  //ViewMore
+  router.get("/api/get-full-doctor", doctorController.getFullDoctors);
+  router.get("/api/get-full-specialty", doctorController.getFullSpecialty);
+
   return app.use("/", router);
 };
 module.exports = initWebRoutes;

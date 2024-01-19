@@ -30,7 +30,9 @@ let createClinic = (data) => {
 let getAllClinic = () => {
   return new Promise(async (resolve, reject) => {
     try {
-      let data = await db.Clinic.findAll();
+      let data = await db.Clinic.findAll({
+        order: [["id", "DESC"]],
+      });
       if (data && data.length > 0) {
         data.map((item) => {
           item.image = Buffer.from(item.image, "base64").toString("binary");

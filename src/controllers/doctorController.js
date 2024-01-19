@@ -133,7 +133,34 @@ let sendRemedy = async (req, res) => {
     });
   }
 };
+
+let getFullDoctors = async (req, res) => {
+  try {
+    let doctors = await doctorService.getFullDoctors();
+    return res.status(200).json(doctors);
+  } catch (error) {
+    console.log(error);
+    return res.status(200).json({
+      errorCode: -1,
+      message: "error from server getFullDoctors",
+    });
+  }
+};
+let getFullSpecialty = async (req, res) => {
+  try {
+    let doctors = await doctorService.getFullSpecialty();
+    return res.status(200).json(doctors);
+  } catch (error) {
+    console.log(error);
+    return res.status(200).json({
+      errorCode: -1,
+      message: "error from server getFullSpecialty",
+    });
+  }
+};
 module.exports = {
+  getFullSpecialty: getFullSpecialty,
+  getFullDoctors: getFullDoctors,
   sendRemedy: sendRemedy,
   getTopDoctorHome: getTopDoctorHome,
   getAllDoctors: getAllDoctors,
