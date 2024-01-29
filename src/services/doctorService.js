@@ -15,7 +15,7 @@ let getTopDoctorHome = (limitInput) => {
         where: {
           roleId: "R2",
         },
-        order: [[{model: db.Doctor_Infor}, "count", "DESC"]],
+        order: [[db.Doctor_Infor, "count", "DESC"]],
         attributes: {
           exclude: ["password"],
         },
@@ -27,7 +27,6 @@ let getTopDoctorHome = (limitInput) => {
           },
           {
             model: db.Doctor_Infor,
-
             attributes: ["count"],
           },
           {
