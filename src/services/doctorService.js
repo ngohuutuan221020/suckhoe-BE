@@ -34,7 +34,7 @@ let getTopDoctorHome = (limitInput) => {
             attributes: ["valueEn", "valueVi"],
           },
         ],
-        order: [[{model: db.Doctor_Infor}, "count", "DESC"]],
+        order: ["id", "DESC"],
         raw: true,
         nest: true,
       });
