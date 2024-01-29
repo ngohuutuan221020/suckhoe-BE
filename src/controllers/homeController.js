@@ -16,7 +16,7 @@ let getCRUD = (req, res) => {
 };
 let postCRUD = async (req, res) => {
   let message = await CRUDService.createNewUser(req.body);
-  console.log(message);
+
   return res.send("POST");
 };
 let displayGetCRUD = async (req, res) => {
@@ -27,10 +27,10 @@ let displayGetCRUD = async (req, res) => {
 };
 let getEditCRUD = async (req, res) => {
   let userId = req.query.id;
-  console.log(userId);
+
   if (userId) {
     let userData = await CRUDService.getUserInfoById(userId);
-    return res.render("editCRUD.ejs", { user: userData });
+    return res.render("editCRUD.ejs", {user: userData});
   } else {
     return res.send("NO");
   }

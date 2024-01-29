@@ -11,6 +11,7 @@ let buildUrlEmail = (doctorId, token) => {
   return result;
 };
 let postBookAppointment = (data) => {
+  console.log(">>>>>", data);
   return new Promise(async (resolve, reject) => {
     try {
       let schedule = await db.Schedule.findOne({
@@ -45,13 +46,16 @@ let postBookAppointment = (data) => {
         } else {
           let token = uuidv4();
           //email
+          // const config = {style: "currency", currency: "VND", maximumFractionDigits: 9};
+          // const formated = new Intl.NumberFormat("vi-VN", config).format(data.price);
+          // console.log("----------", formated);
           await emaiService.sendSimpleEmail({
             reciverEmail: data.email,
             patientName: data.fullName,
             time: data.timeString,
             doctorName: data.doctorName,
             language: data.language,
-            price: "500.000VND",
+            // price: `500 000VNĐ`,
             redirecLink: buildUrlEmail(data.doctorId, token),
           });
 

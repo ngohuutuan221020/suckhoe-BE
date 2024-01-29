@@ -2,7 +2,7 @@ import doctorService from "../services/doctorService";
 
 let getTopDoctorHome = async (req, res) => {
   let limit = req.query.limit;
-  if (!limit) limit = 20;
+  if (!limit) limit = 10;
   try {
     let response = await doctorService.getTopDoctorHome(+limit);
     return res.status(200).json(response);
@@ -134,6 +134,18 @@ let sendRemedy = async (req, res) => {
   }
 };
 
+let getAllPatient = async (req, res) => {
+  try {
+    let doctors = await doctorService.getAllPatient();
+    return res.status(200).json(doctors);
+  } catch (error) {
+    console.log(error);
+    return res.status(200).json({
+      errorCode: -1,
+      message: "error from server getAllPatient",
+    });
+  }
+};
 let getFullDoctors = async (req, res) => {
   try {
     let doctors = await doctorService.getFullDoctors();
@@ -158,7 +170,34 @@ let getFullSpecialty = async (req, res) => {
     });
   }
 };
+let getFullSchedule = async (req, res) => {
+  try {
+    let doctors = await doctorService.getFullSchedule();
+    return res.status(200).json(doctors);
+  } catch (error) {
+    console.log(error);
+    return res.status(200).json({
+      errorCode: -1,
+      message: "error from server getFullSchedule",
+    });
+  }
+};
+let getBooking = async (req, res) => {
+  try {
+    let doctors = await doctorService.getBooking();
+    return res.status(200).json(doctors);
+  } catch (error) {
+    console.log(error);
+    return res.status(200).json({
+      errorCode: -1,
+      message: "error from server getBooking",
+    });
+  }
+};
 module.exports = {
+  getBooking: getBooking,
+  getAllPatient: getAllPatient,
+  getFullSchedule: getFullSchedule,
   getFullSpecialty: getFullSpecialty,
   getFullDoctors: getFullDoctors,
   sendRemedy: sendRemedy,

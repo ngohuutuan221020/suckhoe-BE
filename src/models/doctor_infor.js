@@ -4,6 +4,8 @@ module.exports = (sequelize, DataTypes) => {
   class Doctor_Infor extends Model {
     static associate(models) {
       Doctor_Infor.belongsTo(models.User, {foreignKey: "doctorId"});
+      Doctor_Infor.belongsTo(models.Specialty, {foreignKey: "specialtyId"});
+      Doctor_Infor.belongsTo(models.Clinic, {foreignKey: "clinicId"});
 
       Doctor_Infor.belongsTo(models.Allcode, {
         foreignKey: "priceId",

@@ -32,6 +32,7 @@ let initWebRoutes = (app) => {
   router.get("/api/get-profile-doctor-by-id", doctorController.getProfileDoctorById);
   router.get("/api/get-list-patient-for-doctor", doctorController.getListPatientForDoctor);
   router.get("/api/get-list-patient", doctorController.getListPatient);
+  router.get("/api/get-all-patient", doctorController.getAllPatient);
 
   router.post("/api/send-remedy", doctorController.sendRemedy);
   ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -50,6 +51,10 @@ let initWebRoutes = (app) => {
   //ViewMore
   router.get("/api/get-full-doctor", doctorController.getFullDoctors);
   router.get("/api/get-full-specialty", doctorController.getFullSpecialty);
+  router.get("/api/get-full-schedule", doctorController.getFullSchedule);
+
+  //get lich kham benh
+  router.get("/api/getBooking", doctorController.getBooking);
 
   return app.use("/", router);
 };

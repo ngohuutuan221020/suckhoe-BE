@@ -41,7 +41,7 @@ let getAllClinic = () => {
       }
       resolve({
         errorCode: 0,
-        errorMessage: "Create successfully",
+        errorMessage: "getAllClinic successfully",
         data,
       });
     } catch (error) {
@@ -71,9 +71,14 @@ let getDetailClinicById = (inputId) => {
             where: {
               clinicId: inputId,
             },
-            attributes: ["doctorId", "provinceId"],
+            include: [
+              {
+                model: db.Specialty,
+              },
+            ],
+            raw: true,
+            nest: true,
           });
-
           data.doctorClinic = doctorClinic;
         } else data = {};
         resolve({

@@ -30,7 +30,6 @@ let getBodyHTML = (dataSend) => {
     <p>Thông tin đặt lịch khám bệnh:</p>
     <div><b>Thời gian: ${dataSend.time}</b></div>
     <div><b>Bác sĩ: ${dataSend.doctorName}</b></div>
-    <div><b>Giá khám bệnh: ${dataSend.price}</b></div>
 
     <p>Vui lòng chọn vào đường dẫn bên dưới để xác nhận và hoàn tất thủ tục đặt lịch khám bệnh.</p>
     <div><a href=${dataSend.redirecLink}>Hoàn tất thủ tục đặt lịch</a></div>
@@ -45,7 +44,6 @@ let getBodyHTML = (dataSend) => {
     <p>Information on scheduling medical examinations:</p>
     <div><b>Time: ${dataSend.time}</b></div>
     <div><b>Doctor: ${dataSend.doctorName}</b></div>
-    <div><b>Price: ${dataSend.price}</b></div>
 
     <p>Please select the link below to confirm and complete the medical appointment booking procedure.</p>
     <div><a href=${dataSend.redirecLink}>Complete the scheduling procedure</a></div>

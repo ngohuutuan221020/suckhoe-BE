@@ -2,6 +2,8 @@ import {raw} from "body-parser";
 import emailService from "../services/emailService";
 import db from "../models/index";
 import _ from "lodash";
+import doctor_infor from "../models/doctor_infor";
+import moment from "moment";
 require("dotenv").config();
 const MAX_NUMBER_SCHEDULE = process.env.MAX_NUMBER_SCHEDULE;
 
@@ -10,8 +12,10 @@ let getTopDoctorHome = (limitInput) => {
     try {
       let users = await db.User.findAll({
         limit: limitInput,
-        where: {roleId: "R2"},
-        order: [["createdAt", "DESC"]],
+        where: {
+          roleId: "R2",
+        },
+        order: [[{model: db.Doctor_Infor}, "count", "DESC"]],
         attributes: {
           exclude: ["password"],
         },
@@ -20,6 +24,11 @@ let getTopDoctorHome = (limitInput) => {
             model: db.Allcode,
             as: "positionData",
             attributes: ["valueEn", "valueVi"],
+          },
+          {
+            model: db.Doctor_Infor,
+
+            attributes: ["count"],
           },
           {
             model: db.Allcode,
@@ -189,9 +198,6 @@ let getDetailDoctorById = (inputId) => {
             },
             {
               model: db.Doctor_Infor,
-              attributes: {
-                exclude: ["id", "doctorId"],
-              },
               include: [
                 {
                   model: db.Allcode,
@@ -208,11 +214,15 @@ let getDetailDoctorById = (inputId) => {
                   as: "provinceTypeData",
                   attributes: ["valueEn", "valueVi"],
                 },
+                {
+                  model: db.Specialty,
+                  attributes: ["name"],
+                },
               ],
             },
           ],
           raw: false,
-          nest: true,
+          // nest: true,
         });
 
         if (data && data.image) {
@@ -454,7 +464,7 @@ let getListPatient = (date) => {
       if (!date) {
         resolve({
           errorCode: 1,
-          errorMessage: "Missing required parameter",
+          errorMessage: "Thiếu tham số bắt buộc",
         });
       } else {
         let data = await db.Booking.findAll({
@@ -521,6 +531,19 @@ let sendRemedy = (data) => {
           appointment.statusId = "S3";
           await appointment.save();
         }
+        ///////////////
+        let oneDoctor = await db.Doctor_Infor.findOne({
+          where: {
+            doctorId: data.doctorId,
+          },
+          raw: false,
+        });
+        if (oneDoctor) {
+          oneDoctor.count = ++oneDoctor.count;
+          await oneDoctor.save();
+        }
+        ///////////////
+
         //send
         await emailService.sendAttachment(data);
         resolve({
@@ -534,12 +557,44 @@ let sendRemedy = (data) => {
   });
 };
 
+let getAllPatient = () => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let doctors = await db.User.findAll({
+        where: {roleId: "R3"},
+        // order: [[{model: db.Doctor_Infor}, "count", "DESC"]],
+        attributes: {
+          exclude: ["password"],
+        },
+        // include: [
+        //   {
+        //     model: db.Schedule,
+        //     as: "doctorData",
+        //   },
+        //   {
+        //     model: db.Doctor_Infor,
+        //   },
+        // ],
+        raw: true,
+        nest: true,
+      });
+
+      resolve({
+        errorCode: 0,
+        data: doctors,
+      });
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
 let getFullDoctors = () => {
   return new Promise(async (resolve, reject) => {
     try {
       let doctors = await db.User.findAll({
+        // limit: 6,
         where: {roleId: "R2"},
-        order: [["id", "DESC"]],
+        order: [[{model: db.Doctor_Infor}, "count", "DESC"]],
         attributes: {
           exclude: ["password"],
         },
@@ -549,6 +604,15 @@ let getFullDoctors = () => {
             as: "positionData",
             attributes: ["valueEn", "valueVi"],
           },
+          {
+            model: db.Doctor_Infor,
+            // attributes: ["count"],
+          },
+
+          // {
+          //   model: db.Schedule,
+          //   as: "doctorData",
+          // },
         ],
         raw: true,
         nest: true,
@@ -584,7 +648,74 @@ let getFullSpecialty = () => {
     }
   });
 };
+let getFullSchedule = () => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let data = await db.Schedule.findAll({
+        order: [["date", "DESC"]],
+      });
+      resolve({
+        errorCode: 0,
+        data,
+      });
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
+let getBooking = () => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      // const d = new Date();
+      // let year = d.getFullYear();
+      // const {Op} = require("sequelize");
+      let data = await db.Booking.findAll({
+        // where: {
+        //   createdAt: {
+        //     [Op.gte]: `${year - 1}-11-01`,
+        //     [Op.lt]: `${year - 1}-12-01`,
+        //   },
+        // },
+        order: [["createdAt", "DESC"]],
+      });
+
+      // if (data && data.length > 0) {
+      //   data.map((item) => {
+      //     data.createdAt.unshift((object.createdAt = moment(item.createdAt).utc().format("YYYY/MM/DD")));
+      //   });
+      // }
+      if (data && data.length > 0) {
+        // Tạo một mảng mới với các đối tượng được cập nhật
+        const updatedData = data.map((item) => {
+          // Tạo một đối tượng mới cho mỗi phần tử trong mảng data
+          const updatedObject = {
+            ...item, // Copy tất cả các thuộc tính từ item vào đối tượng mới
+            createdAt: moment(item.createdAt).utc().format("YYYY/MM/DD"),
+          };
+          return updatedObject;
+        });
+
+        // Đặt mảng mới trở lại data
+        data = updatedData;
+      }
+      console.log(moment(data[0].createdAt).utc().format("YYYY/MM/DD"));
+
+      console.log(data);
+
+      resolve({
+        errorCode: 0,
+        data,
+      });
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
+
 module.exports = {
+  getBooking: getBooking,
+  getAllPatient: getAllPatient,
+  getFullSchedule: getFullSchedule,
   getFullSpecialty: getFullSpecialty,
   getFullDoctors: getFullDoctors,
   sendRemedy: sendRemedy,
