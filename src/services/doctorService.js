@@ -15,7 +15,6 @@ let getTopDoctorHome = (limitInput) => {
         where: {
           roleId: "R2",
         },
-        order: [[db.Doctor_Infor, "count", "DESC"]],
         attributes: {
           exclude: ["password"],
         },
@@ -35,14 +34,15 @@ let getTopDoctorHome = (limitInput) => {
             attributes: ["valueEn", "valueVi"],
           },
         ],
+        order: [[db.Doctor_Infor, "count", "DESC"]],
         raw: true,
         nest: true,
       });
-
       resolve({
         errorCode: 0,
         data: users,
       });
+      console.log("Data loaded", users);
     } catch (error) {
       reject(error);
     }
@@ -665,24 +665,9 @@ let getFullSchedule = () => {
 let getBooking = () => {
   return new Promise(async (resolve, reject) => {
     try {
-      // const d = new Date();
-      // let year = d.getFullYear();
-      // const {Op} = require("sequelize");
       let data = await db.Booking.findAll({
-        // where: {
-        //   createdAt: {
-        //     [Op.gte]: `${year - 1}-11-01`,
-        //     [Op.lt]: `${year - 1}-12-01`,
-        //   },
-        // },
         order: [["createdAt", "DESC"]],
       });
-
-      // if (data && data.length > 0) {
-      //   data.map((item) => {
-      //     data.createdAt.unshift((object.createdAt = moment(item.createdAt).utc().format("YYYY/MM/DD")));
-      //   });
-      // }
       if (data && data.length > 0) {
         // Tạo một mảng mới với các đối tượng được cập nhật
         const updatedData = data.map((item) => {
@@ -697,9 +682,6 @@ let getBooking = () => {
         // Đặt mảng mới trở lại data
         data = updatedData;
       }
-      console.log(moment(data[0].createdAt).utc().format("YYYY/MM/DD"));
-
-      console.log(data);
 
       resolve({
         errorCode: 0,
